@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .spinner {
+            display: none;
+            border: 3px solid #ddd;
+            border-top-color: #4CAF50;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s infinite;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+        }
+        .view-users-btn {
+            width: 100%;
+            padding: 12px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .view-users-btn:hover {
+            background: #0b7dda;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Registration</h1>
+    <form id="registrationForm">
+        <input type="text" id="username" placeholder="Username" required>
+        <div class="error" id="username-error"></div>
+        <input type="email" id="email" placeholder="Email" required>
+        <div class="error" id="email-error"></div>
+        <input type="password" id="password" placeholder="Password" required>
+        <div class="error" id="password-error"></div>
+        <input type="number" id="age" placeholder="Age" required>
+        <div class="error" id="age-error"></div>
+        <button type="submit">Register</button>
+        <div class="spinner" id="loadingSpinner"></div>
+    </form>
+    <!-- Button to view registered users -->
+    <button class="view-users-btn" onclick="window.location.href='users-list.html'">View Registered Users</button>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let valid = true;
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const age = document.getElementById('age').value.trim();
+
+            // Validation
+            if (!username) valid = showError('username', 'Username required');
+            if (!email || !/\S+@\S+\.\S+/.test(email)) valid = showError('email', 'Valid email required');
+            if (!password || password.length < 6) valid = showError('password', 'Password min 6 chars');
+            if (!age || age < 18) valid = showError('age', 'Valid age (18+) required');
+
+            if (valid) {
+                document.getElementById('loadingSpinner').style.display = 'inline-block';
+                const userData = { username, email, password, age, id: Date.now() };
+                let users = JSON.parse(localStorage.getItem('usersData')) || [];
+                users.push(userData);
+                localStorage.setItem('usersData', JSON.stringify(users));
+                alert('Registration successful');
+                document.getElementById('registrationForm').reset();
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+        });
+
+        function showError(field, message) {
+            document.getElementById(`${field}-error`).textContent = message;
+            return false;
+        }
+    </script>
+</body>
+</html>
